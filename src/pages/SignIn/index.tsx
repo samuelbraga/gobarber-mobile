@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import {
   View,
   ScrollView,
@@ -7,6 +7,10 @@ import {
   Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
+import { useNavigation } from '@react-navigation/native';
+import { Form } from '@unform/mobile';
+import { FormHandles } from '@unform/core'
+
 
 import Input from '../../components/input';
 import Button from '../../components/button';
@@ -23,6 +27,13 @@ import {
 } from './styles';
 
 const SignIn: React.FC = () => {
+  const fromRef = useRef<FormHandles>(null);
+  const navigation = useNavigation();
+
+  const handleSignIn = useCallback((data: Object) => {
+    console.log(data);
+  }, []);
+
   return (
     <>
       <KeyboardAvoidingView
@@ -41,17 +52,24 @@ const SignIn: React.FC = () => {
               <Title>Faça seu logon</Title>
             </View>
 
-            <Input name="email" placeholder="E-mail" icon="mail" />
-            <Input name="" placeholder="Senha" icon="lock" />
+            <Form ref={fromRef} onSubmit={handleSignIn}>
+              <Input name="email" placeholder="E-mail" icon="mail" />
+              <Input name="password" placeholder="Senha" icon="lock" />
 
-            <Button onPress={() => console.log('Deu')}>Entrar</Button>
-
+              <Button
+                onPress={() => {
+                  fromRef.current?.submitForm();
+                }}
+              >
+              Entrar
+              </Button>
+            </Form>
             <ForgotPassword onPress={() => console.log('forgot')}>
               <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>
             </ForgotPassword>
           </Container>
 
-          <CreateAccountButton onPress={() => console.log('create')}>
+          <CreateAccountButton onPress={() => navigation.navigate('SignUp')}>
             <Icon name="log-in" size={20} color="#ff9000" />
             <CreateAccountButtonText>Crie sua conta</CreateAccountButtonText>
           </CreateAccountButton>
