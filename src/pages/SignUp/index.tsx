@@ -6,11 +6,15 @@ import {
   KeyboardAvoidingView,
   Platform,
   TextInput,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
+import * as Yup from 'yup';
+
+import getValidationErrors from '../../utils/getValidationsErros';
 
 import Input from '../../components/input';
 import Button from '../../components/button';
@@ -24,6 +28,12 @@ import {
   BackToSignInButtonText,
 } from './styles';
 
+interface SingUpFormData {
+  name: string;
+  email: string;
+  password: string;
+}
+
 const SignUp: React.FC = () => {
   const fromRef = useRef<FormHandles>(null);
   const emailInputRef = useRef<TextInput>(null);
@@ -31,8 +41,38 @@ const SignUp: React.FC = () => {
 
   const navigation = useNavigation();
 
-  const handleSignUp = useCallback((data: Record<string, any>) => {
-    console.log(data);
+  const handleSignUp = useCallback(async (data: SingUpFormData): Promise<
+    void
+  > => {
+    try {
+      fromRef.current?.setErrors({});
+      const schema = Yup.object().shape({
+        name: Yup.string().required('Nome é obrigatório'),
+        email: Yup.string()
+          .required('Email é obrigatório')
+          .email('Digite um email válido'),
+        password: Yup.string().min(6, 'Mínimo 6 caracteres'),
+      });
+
+      await schema.validate(data, {
+        abortEarly: false,
+      });
+
+      // await api.post('/users', data);
+
+      // history.push('/');
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
+        fromRef.current?.setErrors(errors);
+        return;
+      }
+
+      Alert.alert(
+        'Erro no cadastro',
+        'Ocorreu um erro no cadastro, tente novamente',
+      );
+    }
   }, []);
 
   return (
