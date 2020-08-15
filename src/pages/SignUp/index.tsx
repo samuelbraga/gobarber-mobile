@@ -14,6 +14,7 @@ import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 
+import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationsErros';
 
 import Input from '../../components/input';
@@ -41,39 +42,45 @@ const SignUp: React.FC = () => {
 
   const navigation = useNavigation();
 
-  const handleSignUp = useCallback(async (data: SingUpFormData): Promise<
-    void
-  > => {
-    try {
-      fromRef.current?.setErrors({});
-      const schema = Yup.object().shape({
-        name: Yup.string().required('Nome é obrigatório'),
-        email: Yup.string()
-          .required('Email é obrigatório')
-          .email('Digite um email válido'),
-        password: Yup.string().min(6, 'Mínimo 6 caracteres'),
-      });
+  const handleSignUp = useCallback(
+    async (data: SingUpFormData): Promise<void> => {
+      try {
+        fromRef.current?.setErrors({});
+        const schema = Yup.object().shape({
+          name: Yup.string().required('Nome é obrigatório'),
+          email: Yup.string()
+            .required('Email é obrigatório')
+            .email('Digite um email válido'),
+          password: Yup.string().min(6, 'Mínimo 6 caracteres'),
+        });
 
-      await schema.validate(data, {
-        abortEarly: false,
-      });
+        await schema.validate(data, {
+          abortEarly: false,
+        });
 
-      // await api.post('/users', data);
+        await api.post('/users', data);
 
-      // history.push('/');
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidationErrors(err);
-        fromRef.current?.setErrors(errors);
-        return;
+        Alert.alert(
+          'Cadastro realizado com sucesso!',
+          'Você já pode fazer login na aplicação',
+        );
+
+        navigation.goBack();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+          fromRef.current?.setErrors(errors);
+          return;
+        }
+
+        Alert.alert(
+          'Erro no cadastro',
+          'Ocorreu um erro no cadastro, tente novamente',
+        );
       }
-
-      Alert.alert(
-        'Erro no cadastro',
-        'Ocorreu um erro no cadastro, tente novamente',
-      );
-    }
-  }, []);
+    },
+    [navigation],
+  );
 
   return (
     <>
