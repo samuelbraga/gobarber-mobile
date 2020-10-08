@@ -56,15 +56,12 @@ const CreateAppointment: React.FC = () => {
     setShowDatePicker((state) => !state);
   }, []);
 
-  const handleDateChanged = useCallback(
-    (event: any, date: Date | undefined) => {
-      if (Platform.OS === 'android') {
-        setShowDatePicker(false);
-      }
-      if (date) setSelectedDate(date);
-    },
-    [],
-  );
+  const handleDateChanged = useCallback((_, date: Date | undefined) => {
+    if (Platform.OS === 'android') {
+      setShowDatePicker(false);
+    }
+    if (date) setSelectedDate(date);
+  }, []);
 
   useEffect(() => {
     api.get('providers').then((response) => {
