@@ -1,9 +1,10 @@
 import styled from 'styled-components/native';
 import { Platform } from 'react-native';
 
-export const Container = styled.View`
+export const Container = styled.ScrollView`
   flex: 1;
-  padding: 0 30px ${Platform.OS === 'android' ? 150 : 40}px;
+  padding: 0 30px ${Platform.OS === 'android' ? 100 : 40}px;
+  position: relative;
 `;
 
 export const Title = styled.Text`
@@ -18,12 +19,12 @@ export const BackButton = styled.TouchableOpacity`
 `;
 
 export const UserAvatarBottun = styled.TouchableOpacity`
-  margin-top: 32px;
+  margin-top: 10px;
 `;
 
 export const UserAvatar = styled.Image`
-  width: 186px;
-  height: 186px;
-  border-radius: 98px;
+  width: 180px;
+  height: 180px;
+  border-radius: 90px;
   align-self: center;
 `;
