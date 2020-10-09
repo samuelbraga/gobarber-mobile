@@ -45,6 +45,10 @@ const Profile: React.FC = () => {
 
   const navigation = useNavigation();
 
+  const handleGoBack = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
+
   const handleSignUp = useCallback(
     async (data: SingUpFormData): Promise<void> => {
       try {
@@ -97,7 +101,7 @@ const Profile: React.FC = () => {
           contentContainerStyle={{ flex: 1 }}
         >
           <Container>
-            <BackButton onPress={() => {}}>
+            <BackButton onPress={handleGoBack}>
               <Icon name="chevron-left" size={24} color="#999591" />
             </BackButton>
 
